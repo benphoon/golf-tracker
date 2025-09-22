@@ -72,7 +72,7 @@ export const getScoreQuality = (score: number, par: number = 4): string => {
  * Calculate total from an array of scores, treating null as 0
  */
 export const calculateTotalScore = (scores: (number | null)[]): number => {
-  return scores.reduce((sum, score) => sum + (score || 0), 0)
+  return scores.reduce((sum: number, score) => sum + (score || 0), 0)
 }
 
 /**
