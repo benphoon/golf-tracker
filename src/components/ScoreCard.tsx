@@ -2,6 +2,13 @@
 
 import { useState, useEffect } from 'react'
 import { RoundType } from '@/types'
+import {
+  calculatePar,
+  formatRelativeToPar,
+  isValidScore,
+  calculateTotalScore,
+  generateCompletionMessage
+} from '@/utils/golf'
 
 interface ScoreCardProps {
   holes: RoundType
@@ -32,8 +39,8 @@ export default function ScoreCard({ holes, onBack }: ScoreCardProps) {
 
   // Calculate total score whenever scores change
   useEffect(() => {
-    const total = scores.reduce((sum, score) => (sum || 0) + (score || 0), 0)
-    setTotalScore(total || 0)
+    const total = calculateTotalScore(scores)
+    setTotalScore(total)
 
     // Save to session storage
     sessionStorage.setItem(storageKey, JSON.stringify(scores))
@@ -41,7 +48,7 @@ export default function ScoreCard({ holes, onBack }: ScoreCardProps) {
 
   const updateScore = (holeIndex: number, value: string) => {
     const numValue = value === '' ? null : parseInt(value, 10)
-    if (numValue === null || (!isNaN(numValue) && numValue >= 1 && numValue <= 15)) {
+    if (numValue === null || (!isNaN(numValue) && isValidScore(numValue))) {
       const newScores = [...scores]
       newScores[holeIndex] = numValue
       setScores(newScores)
@@ -54,7 +61,7 @@ export default function ScoreCard({ holes, onBack }: ScoreCardProps) {
   }
 
   const completedHoles = scores.filter(score => score !== null).length
-  const par = holes * 4 // Assuming par 4 for all holes for simplicity
+  const par = calculatePar(holes)
 
   return (
     <div className="space-y-6">
@@ -88,10 +95,7 @@ export default function ScoreCard({ holes, onBack }: ScoreCardProps) {
             totalScore === par ? 'text-blue-600 bg-blue-100' :
             'text-red-600 bg-red-100'
           }`}>
-            {totalScore === 0 ? '--' :
-             totalScore < par ? `${totalScore - par}` :
-             totalScore === par ? 'E' :
-             `+${totalScore - par}`}
+            {formatRelativeToPar(totalScore, par)}
           </div>
         </div>
       </div>
@@ -151,7 +155,7 @@ export default function ScoreCard({ holes, onBack }: ScoreCardProps) {
         {completedHoles === holes && (
           <button
             onClick={() => {
-              alert(`Round complete! Final score: ${totalScore} (${totalScore === par ? 'Even par' : totalScore < par ? `${totalScore - par} under par` : `+${totalScore - par} over par`})`)
+              alert(generateCompletionMessage(totalScore, par))
             }}
             className="flex-1 py-3 px-6 bg-golf-green-500 hover:bg-golf-green-600 text-white font-semibold rounded-lg transition-colors duration-200"
           >
