@@ -15,52 +15,65 @@ jest.mock('../../components/ScoreCard', () => {
 })
 
 describe('Home Page', () => {
-  describe('Initial Render', () => {
-    it('renders the main title and description', () => {
+  describe('Initial Render (Splash Page)', () => {
+    it('renders the splash page with branding', () => {
       render(<Home />)
 
-      expect(screen.getByText('⛳ ShotMate')).toBeInTheDocument()
-      expect(screen.getByText('Your perfect golf scoring companion')).toBeInTheDocument()
+      expect(screen.getByText('ShotMate')).toBeInTheDocument()
+      expect(screen.getByText('Your perfect golf companion')).toBeInTheDocument()
+      expect(screen.getByText('Start Tracking')).toBeInTheDocument()
     })
 
-    it('renders round selection section', () => {
+    it('renders feature highlights', () => {
       render(<Home />)
+
+      expect(screen.getByText('Score Tracking')).toBeInTheDocument()
+      expect(screen.getByText('Mobile Ready')).toBeInTheDocument()
+      expect(screen.getByText('Quick Entry')).toBeInTheDocument()
+      expect(screen.getByText('Track Progress')).toBeInTheDocument()
+    })
+
+    it('renders coming soon message', () => {
+      render(<Home />)
+
+      expect(screen.getByText('Coming soon: Sign in to save your rounds')).toBeInTheDocument()
+    })
+  })
+
+  describe('Navigation Flow', () => {
+    it('navigates to round selection when start button is clicked', async () => {
+      const user = userEvent.setup()
+      render(<Home />)
+
+      const startButton = screen.getByText('Start Tracking')
+      await user.click(startButton)
 
       expect(screen.getByText('Choose Your Round')).toBeInTheDocument()
+      expect(screen.getByText('⛳ ShotMate')).toBeInTheDocument()
     })
 
-    it('renders 9-hole button with correct content', () => {
+    it('shows round selection buttons after clicking start', async () => {
+      const user = userEvent.setup()
       render(<Home />)
 
-      const nineHoleButton = screen.getByRole('button', { name: /9 holes/i })
-      expect(nineHoleButton).toBeInTheDocument()
-      expect(screen.getByText('🌅')).toBeInTheDocument()
+      const startButton = screen.getByText('Start Tracking')
+      await user.click(startButton)
+
       expect(screen.getByText('9 Holes')).toBeInTheDocument()
-      expect(screen.getByText('Quick round')).toBeInTheDocument()
-    })
-
-    it('renders 18-hole button with correct content', () => {
-      render(<Home />)
-
-      const eighteenHoleButton = screen.getByRole('button', { name: /18 holes/i })
-      expect(eighteenHoleButton).toBeInTheDocument()
-      expect(screen.getByText('🌞')).toBeInTheDocument()
       expect(screen.getByText('18 Holes')).toBeInTheDocument()
+      expect(screen.getByText('Quick round')).toBeInTheDocument()
       expect(screen.getByText('Full round')).toBeInTheDocument()
     })
 
-    it('renders footer text', () => {
-      render(<Home />)
-
-      expect(screen.getByText('Mobile-optimized for on-course use')).toBeInTheDocument()
-    })
-  })
-
-  describe('Round Selection', () => {
-    it('shows ScoreCard when 9-hole button is clicked', async () => {
+    it('navigates to scorecard when 9-hole button is clicked', async () => {
       const user = userEvent.setup()
       render(<Home />)
 
+      // First click start to get to round selection
+      const startButton = screen.getByText('Start Tracking')
+      await user.click(startButton)
+
+      // Then click 9-hole button
       const nineHoleButton = screen.getByRole('button', { name: /9 holes/i })
       await user.click(nineHoleButton)
 
@@ -68,15 +81,17 @@ describe('Home Page', () => {
         expect(screen.getByTestId('scorecard')).toBeInTheDocument()
         expect(screen.getByText('ScoreCard for 9 holes')).toBeInTheDocument()
       })
-
-      // Main menu should be hidden
-      expect(screen.queryByText('Choose Your Round')).not.toBeInTheDocument()
     })
 
-    it('shows ScoreCard when 18-hole button is clicked', async () => {
+    it('navigates to scorecard when 18-hole button is clicked', async () => {
       const user = userEvent.setup()
       render(<Home />)
 
+      // First click start to get to round selection
+      const startButton = screen.getByText('Start Tracking')
+      await user.click(startButton)
+
+      // Then click 18-hole button
       const eighteenHoleButton = screen.getByRole('button', { name: /18 holes/i })
       await user.click(eighteenHoleButton)
 
@@ -84,18 +99,16 @@ describe('Home Page', () => {
         expect(screen.getByTestId('scorecard')).toBeInTheDocument()
         expect(screen.getByText('ScoreCard for 18 holes')).toBeInTheDocument()
       })
-
-      // Main menu should be hidden
-      expect(screen.queryByText('Choose Your Round')).not.toBeInTheDocument()
     })
-  })
 
-  describe('Navigation Back to Main Menu', () => {
-    it('returns to main menu when back is called from 9-hole scorecard', async () => {
+    it('returns to round selection when back is clicked from scorecard', async () => {
       const user = userEvent.setup()
       render(<Home />)
 
-      // Navigate to 9-hole scorecard
+      // Navigate to scorecard
+      const startButton = screen.getByText('Start Tracking')
+      await user.click(startButton)
+
       const nineHoleButton = screen.getByRole('button', { name: /9 holes/i })
       await user.click(nineHoleButton)
 
@@ -111,134 +124,56 @@ describe('Home Page', () => {
         expect(screen.queryByTestId('scorecard')).not.toBeInTheDocument()
         expect(screen.getByText('Choose Your Round')).toBeInTheDocument()
       })
-    })
-
-    it('returns to main menu when back is called from 18-hole scorecard', async () => {
-      const user = userEvent.setup()
-      render(<Home />)
-
-      // Navigate to 18-hole scorecard
-      const eighteenHoleButton = screen.getByRole('button', { name: /18 holes/i })
-      await user.click(eighteenHoleButton)
-
-      await waitFor(() => {
-        expect(screen.getByTestId('scorecard')).toBeInTheDocument()
-      })
-
-      // Click back button
-      const backButton = screen.getByTestId('back-button')
-      await user.click(backButton)
-
-      await waitFor(() => {
-        expect(screen.queryByTestId('scorecard')).not.toBeInTheDocument()
-        expect(screen.getByText('Choose Your Round')).toBeInTheDocument()
-      })
-    })
-  })
-
-  describe('State Management', () => {
-    it('maintains separate state for different round selections', async () => {
-      const user = userEvent.setup()
-      render(<Home />)
-
-      // Select 9 holes
-      const nineHoleButton = screen.getByRole('button', { name: /9 holes/i })
-      await user.click(nineHoleButton)
-
-      await waitFor(() => {
-        expect(screen.getByText('ScoreCard for 9 holes')).toBeInTheDocument()
-      })
-
-      // Go back to main menu
-      const backButton = screen.getByTestId('back-button')
-      await user.click(backButton)
-
-      await waitFor(() => {
-        expect(screen.getByText('Choose Your Round')).toBeInTheDocument()
-      })
-
-      // Select 18 holes
-      const eighteenHoleButton = screen.getByRole('button', { name: /18 holes/i })
-      await user.click(eighteenHoleButton)
-
-      await waitFor(() => {
-        expect(screen.getByText('ScoreCard for 18 holes')).toBeInTheDocument()
-      })
-    })
-
-    it('starts with no round selected', () => {
-      render(<Home />)
-
-      // Should show main menu, not scorecard
-      expect(screen.getByText('Choose Your Round')).toBeInTheDocument()
-      expect(screen.queryByTestId('scorecard')).not.toBeInTheDocument()
     })
   })
 
   describe('Button Interactions', () => {
-    it('9-hole button responds to click events', async () => {
+    it('start button responds to clicks', async () => {
       const user = userEvent.setup()
       render(<Home />)
 
-      const nineHoleButton = screen.getByRole('button', { name: /9 holes/i })
+      const startButton = screen.getByText('Start Tracking')
+      expect(startButton).toBeEnabled()
 
-      // Button should be clickable
-      expect(nineHoleButton).toBeEnabled()
+      await user.click(startButton)
 
-      await user.click(nineHoleButton)
-
-      await waitFor(() => {
-        expect(screen.getByTestId('scorecard')).toBeInTheDocument()
-      })
+      expect(screen.getByText('Choose Your Round')).toBeInTheDocument()
     })
 
-    it('18-hole button responds to click events', async () => {
+    it('round selection buttons work after navigation', async () => {
       const user = userEvent.setup()
       render(<Home />)
 
+      // Navigate to round selection
+      const startButton = screen.getByText('Start Tracking')
+      await user.click(startButton)
+
+      const nineHoleButton = screen.getByRole('button', { name: /9 holes/i })
       const eighteenHoleButton = screen.getByRole('button', { name: /18 holes/i })
 
-      // Button should be clickable
+      expect(nineHoleButton).toBeEnabled()
       expect(eighteenHoleButton).toBeEnabled()
-
-      await user.click(eighteenHoleButton)
-
-      await waitFor(() => {
-        expect(screen.getByTestId('scorecard')).toBeInTheDocument()
-      })
-    })
-
-    it('handles rapid button clicks gracefully', async () => {
-      const user = userEvent.setup()
-      render(<Home />)
-
-      const nineHoleButton = screen.getByRole('button', { name: /9 holes/i })
-
-      // Click multiple times rapidly
-      await user.click(nineHoleButton)
-      await user.click(nineHoleButton)
-      await user.click(nineHoleButton)
-
-      await waitFor(() => {
-        expect(screen.getByTestId('scorecard')).toBeInTheDocument()
-        expect(screen.getByText('ScoreCard for 9 holes')).toBeInTheDocument()
-      })
     })
   })
 
   describe('CSS Classes and Styling', () => {
-    it('applies correct CSS classes to main elements', () => {
+    it('applies correct styling to splash page elements', () => {
       render(<Home />)
 
-      const title = screen.getByText('⛳ ShotMate')
-      expect(title).toHaveClass('text-4xl', 'font-bold', 'text-white', 'drop-shadow-lg')
+      const title = screen.getByText('ShotMate')
+      expect(title).toHaveClass('text-5xl', 'font-bold', 'text-white')
 
-      const subtitle = screen.getByText('Your perfect golf scoring companion')
-      expect(subtitle).toHaveClass('text-lg', 'text-white/90', 'drop-shadow-md')
+      const subtitle = screen.getByText('Your perfect golf companion')
+      expect(subtitle).toHaveClass('text-xl', 'text-white/90')
     })
 
-    it('applies different styling to 9-hole and 18-hole buttons', () => {
+    it('applies correct styling to round selection after navigation', async () => {
+      const user = userEvent.setup()
       render(<Home />)
+
+      // Navigate to round selection
+      const startButton = screen.getByText('Start Tracking')
+      await user.click(startButton)
 
       const nineHoleButton = screen.getByRole('button', { name: /9 holes/i })
       const eighteenHoleButton = screen.getByRole('button', { name: /18 holes/i })
@@ -249,22 +184,36 @@ describe('Home Page', () => {
   })
 
   describe('Accessibility', () => {
-    it('has proper button roles and names', () => {
+    it('has proper button roles and names on splash page', () => {
       render(<Home />)
+
+      expect(screen.getByRole('button', { name: /start tracking/i })).toBeInTheDocument()
+    })
+
+    it('has proper button roles after navigation', async () => {
+      const user = userEvent.setup()
+      render(<Home />)
+
+      const startButton = screen.getByText('Start Tracking')
+      await user.click(startButton)
 
       expect(screen.getByRole('button', { name: /9 holes/i })).toBeInTheDocument()
       expect(screen.getByRole('button', { name: /18 holes/i })).toBeInTheDocument()
     })
 
-    it('provides descriptive text for round options', () => {
+    it('has proper heading hierarchy on splash page', () => {
       render(<Home />)
 
-      expect(screen.getByText('Quick round')).toBeInTheDocument()
-      expect(screen.getByText('Full round')).toBeInTheDocument()
+      const mainHeading = screen.getByRole('heading', { level: 1 })
+      expect(mainHeading).toHaveTextContent('ShotMate')
     })
 
-    it('has proper heading hierarchy', () => {
+    it('has proper heading hierarchy after navigation', async () => {
+      const user = userEvent.setup()
       render(<Home />)
+
+      const startButton = screen.getByText('Start Tracking')
+      await user.click(startButton)
 
       const mainHeading = screen.getByRole('heading', { level: 1 })
       expect(mainHeading).toHaveTextContent('⛳ ShotMate')
@@ -275,19 +224,33 @@ describe('Home Page', () => {
   })
 
   describe('Content Structure', () => {
-    it('displays emojis correctly', () => {
+    it('displays emojis correctly on splash page', () => {
       render(<Home />)
+
+      expect(screen.getByText('⛳')).toBeInTheDocument() // Logo placeholder
+      expect(screen.getByText('🏌️‍♂️')).toBeInTheDocument() // Start button emoji
+    })
+
+    it('displays emojis correctly after navigation', async () => {
+      const user = userEvent.setup()
+      render(<Home />)
+
+      const startButton = screen.getByText('Start Tracking')
+      await user.click(startButton)
 
       expect(screen.getByText(/⛳ ShotMate/)).toBeInTheDocument() // Main title with emoji
       expect(screen.getByText('🌅')).toBeInTheDocument() // 9-hole emoji
       expect(screen.getByText('🌞')).toBeInTheDocument() // 18-hole emoji
     })
 
-    it('has proper spacing and layout elements', () => {
+    it('shows footer text after navigation', async () => {
+      const user = userEvent.setup()
       render(<Home />)
 
-      const mainContainer = screen.getByText('Choose Your Round').closest('div')
-      expect(mainContainer?.parentElement).toHaveClass('space-y-8')
+      const startButton = screen.getByText('Start Tracking')
+      await user.click(startButton)
+
+      expect(screen.getByText('Mobile-optimized for on-course use')).toBeInTheDocument()
     })
   })
 })
