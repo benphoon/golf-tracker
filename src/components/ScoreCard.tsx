@@ -64,16 +64,17 @@ export default function ScoreCard({ holes, onBack }: ScoreCardProps) {
   const par = calculatePar(holes)
 
   return (
-    <div className="space-y-6">
+    <div className="min-h-screen p-4">
+      <div className="max-w-md mx-auto space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <button
           onClick={onBack}
-          className="text-golf-green-600 hover:text-golf-green-700 font-medium"
+          className="text-white hover:text-white/80 font-medium drop-shadow-md"
         >
           ← Back
         </button>
-        <h1 className="text-2xl font-bold text-golf-green-700">
+        <h1 className="text-2xl font-bold text-white drop-shadow-lg">
           {holes} Hole Round
         </h1>
         <div className="w-12" /> {/* Spacer for centering */}
@@ -162,6 +163,7 @@ export default function ScoreCard({ holes, onBack }: ScoreCardProps) {
             Finish Round
           </button>
         )}
+      </div>
       </div>
     </div>
   )

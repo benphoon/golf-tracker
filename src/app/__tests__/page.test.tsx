@@ -19,8 +19,8 @@ describe('Home Page', () => {
     it('renders the main title and description', () => {
       render(<Home />)
 
-      expect(screen.getByText('⛳ Golf Tracker')).toBeInTheDocument()
-      expect(screen.getByText('Track your golf scores with ease')).toBeInTheDocument()
+      expect(screen.getByText('⛳ ShotMate')).toBeInTheDocument()
+      expect(screen.getByText('Your perfect golf scoring companion')).toBeInTheDocument()
     })
 
     it('renders round selection section', () => {
@@ -230,11 +230,11 @@ describe('Home Page', () => {
     it('applies correct CSS classes to main elements', () => {
       render(<Home />)
 
-      const title = screen.getByText('⛳ Golf Tracker')
-      expect(title).toHaveClass('text-4xl', 'font-bold', 'text-golf-green-700')
+      const title = screen.getByText('⛳ ShotMate')
+      expect(title).toHaveClass('text-4xl', 'font-bold', 'text-white', 'drop-shadow-lg')
 
-      const subtitle = screen.getByText('Track your golf scores with ease')
-      expect(subtitle).toHaveClass('text-lg', 'text-gray-600')
+      const subtitle = screen.getByText('Your perfect golf scoring companion')
+      expect(subtitle).toHaveClass('text-lg', 'text-white/90', 'drop-shadow-md')
     })
 
     it('applies different styling to 9-hole and 18-hole buttons', () => {
@@ -243,8 +243,8 @@ describe('Home Page', () => {
       const nineHoleButton = screen.getByRole('button', { name: /9 holes/i })
       const eighteenHoleButton = screen.getByRole('button', { name: /18 holes/i })
 
-      expect(nineHoleButton).toHaveClass('bg-golf-green-500', 'hover:bg-golf-green-600')
-      expect(eighteenHoleButton).toHaveClass('bg-golf-green-600', 'hover:bg-golf-green-700')
+      expect(nineHoleButton).toHaveClass('bg-amber-50', 'hover:bg-amber-100', 'text-amber-900')
+      expect(eighteenHoleButton).toHaveClass('bg-stone-50', 'hover:bg-stone-100', 'text-stone-900')
     })
   })
 
@@ -267,7 +267,7 @@ describe('Home Page', () => {
       render(<Home />)
 
       const mainHeading = screen.getByRole('heading', { level: 1 })
-      expect(mainHeading).toHaveTextContent('⛳ Golf Tracker')
+      expect(mainHeading).toHaveTextContent('⛳ ShotMate')
 
       const subHeading = screen.getByRole('heading', { level: 2 })
       expect(subHeading).toHaveTextContent('Choose Your Round')
@@ -278,7 +278,7 @@ describe('Home Page', () => {
     it('displays emojis correctly', () => {
       render(<Home />)
 
-      expect(screen.getByText(/⛳ Golf Tracker/)).toBeInTheDocument() // Main title with emoji
+      expect(screen.getByText(/⛳ ShotMate/)).toBeInTheDocument() // Main title with emoji
       expect(screen.getByText('🌅')).toBeInTheDocument() // 9-hole emoji
       expect(screen.getByText('🌞')).toBeInTheDocument() // 18-hole emoji
     })
