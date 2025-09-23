@@ -4,13 +4,15 @@ import { useState } from 'react'
 import ScoreCard from '@/components/ScoreCard'
 import SplashPage from '@/components/SplashPage'
 import RoundSelection from '@/components/RoundSelection'
-import { RoundType } from '@/types'
+import PlayerSetup from '@/components/PlayerSetup'
+import { RoundType, Player } from '@/types'
 
-type AppState = 'splash' | 'roundSelection' | 'scorecard'
+type AppState = 'splash' | 'roundSelection' | 'playerSetup' | 'scorecard'
 
 export default function Home() {
   const [appState, setAppState] = useState<AppState>('splash')
   const [selectedRound, setSelectedRound] = useState<RoundType | null>(null)
+  const [players, setPlayers] = useState<Player[]>([])
 
   const handleStart = () => {
     setAppState('roundSelection')
@@ -18,20 +20,46 @@ export default function Home() {
 
   const handleRoundSelect = (holes: RoundType) => {
     setSelectedRound(holes)
+    setAppState('playerSetup')
+  }
+
+  const handlePlayersSetup = (setupPlayers: Player[]) => {
+    setPlayers(setupPlayers)
     setAppState('scorecard')
   }
 
   const handleBackToSelection = () => {
     setAppState('roundSelection')
     setSelectedRound(null)
+    setPlayers([])
+  }
+
+  const handleBackToPlayerSetup = () => {
+    setAppState('playerSetup')
   }
 
   if (appState === 'splash') {
     return <SplashPage onStart={handleStart} />
   }
 
-  if (appState === 'scorecard' && selectedRound) {
-    return <ScoreCard holes={selectedRound} onBack={handleBackToSelection} />
+  if (appState === 'playerSetup' && selectedRound) {
+    return (
+      <PlayerSetup
+        holes={selectedRound}
+        onContinue={handlePlayersSetup}
+        onBack={handleBackToSelection}
+      />
+    )
+  }
+
+  if (appState === 'scorecard' && selectedRound && players.length > 0) {
+    return (
+      <ScoreCard
+        holes={selectedRound}
+        players={players}
+        onBack={handleBackToPlayerSetup}
+      />
+    )
   }
 
   return <RoundSelection onRoundSelect={handleRoundSelect} />
