@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Golf Tracker ⛳',
-  description: 'A simple, clean golf score tracker for quick rounds',
+  title: 'ShotMate ⛳',
+  description: 'Your perfect golf scoring companion for quick rounds',
 }
 
 export const viewport = {
