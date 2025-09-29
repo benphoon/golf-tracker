@@ -15,6 +15,19 @@ jest.mock('../../components/ScoreCard', () => {
   }
 })
 
+// Mock the MultiplayerCardView component
+jest.mock('../../components/MultiplayerCardView', () => {
+  return function MockMultiplayerCardView({ holes, players, onBack }: { holes: number; players: any[]; onBack: () => void }) {
+    return (
+      <div data-testid="multiplayer-card-view">
+        <div>MultiplayerCardView for {holes} holes</div>
+        <div>Players: {players?.length || 0}</div>
+        <button onClick={onBack} data-testid="back-button">Back</button>
+      </div>
+    )
+  }
+})
+
 describe('Home Page', () => {
   describe('Initial Render (Splash Page)', () => {
     it('renders the splash page with branding', () => {
@@ -127,6 +140,55 @@ describe('Home Page', () => {
       await waitFor(() => {
         expect(screen.getByTestId('scorecard')).toBeInTheDocument()
         expect(screen.getByText('ScoreCard for 9 holes')).toBeInTheDocument()
+      })
+    })
+
+    it('routes single player to traditional scorecard', async () => {
+      const user = userEvent.setup()
+      render(<Home />)
+
+      // Navigate to round selection → player setup → scorecard
+      const startButton = screen.getByText('Start Tracking')
+      await user.click(startButton)
+
+      const nineHoleButton = screen.getByRole('button', { name: /9 holes/i })
+      await user.click(nineHoleButton)
+
+      // Player setup with 1 player (default)
+      const continueButton = screen.getByText('Continue to Scoring')
+      await user.click(continueButton)
+
+      await waitFor(() => {
+        // Should use traditional ScoreCard for single player
+        expect(screen.getByTestId('scorecard')).toBeInTheDocument()
+        expect(screen.getByText('ScoreCard for 9 holes')).toBeInTheDocument()
+        expect(screen.getByText('Players: 1')).toBeInTheDocument()
+      })
+    })
+
+    it('routes multiplayer to card-based view', async () => {
+      const user = userEvent.setup()
+      render(<Home />)
+
+      // Navigate to round selection → player setup → multiplayer card view
+      const startButton = screen.getByText('Start Tracking')
+      await user.click(startButton)
+
+      const nineHoleButton = screen.getByRole('button', { name: /9 holes/i })
+      await user.click(nineHoleButton)
+
+      // Add a second player
+      const addPlayerButton = screen.getByText(/Add Player/)
+      await user.click(addPlayerButton)
+
+      const continueButton = screen.getByText('Continue to Scoring')
+      await user.click(continueButton)
+
+      await waitFor(() => {
+        // Should use MultiplayerCardView for 2+ players
+        expect(screen.getByTestId('multiplayer-card-view')).toBeInTheDocument()
+        expect(screen.getByText('MultiplayerCardView for 9 holes')).toBeInTheDocument()
+        expect(screen.getByText('Players: 2')).toBeInTheDocument()
       })
     })
   })

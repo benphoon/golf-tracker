@@ -63,7 +63,10 @@ export default function PlayerSetup({ holes, onContinue, onBack }: PlayerSetupPr
             {holes} Hole Round
           </h2>
           <p className="text-white/90 drop-shadow-md">
-            Add 2-4 players for your round
+            {playerNames.length === 1 ?
+              'Single player practice mode' :
+              `Multiplayer mode - ${playerNames.length} players`
+            }
           </p>
         </div>
 
@@ -110,8 +113,13 @@ export default function PlayerSetup({ holes, onContinue, onBack }: PlayerSetupPr
         </button>
 
         {/* Footer */}
-        <div className="pt-4 text-sm text-white/80">
+        <div className="pt-4 text-sm text-white/80 text-center">
           <p>You can edit player names during the round</p>
+          {playerNames.length === 1 ? (
+            <p className="mt-2">💡 Single player mode uses a detailed scorecard</p>
+          ) : (
+            <p className="mt-2">🎯 Multiplayer mode uses a card-based interface</p>
+          )}
         </div>
       </div>
     </div>

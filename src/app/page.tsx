@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import ScoreCard from '@/components/ScoreCard'
+import MultiplayerCardView from '@/components/MultiplayerCardView'
 import SplashPage from '@/components/SplashPage'
 import RoundSelection from '@/components/RoundSelection'
 import PlayerSetup from '@/components/PlayerSetup'
@@ -53,13 +54,25 @@ export default function Home() {
   }
 
   if (appState === 'scorecard' && selectedRound && players.length > 0) {
-    return (
-      <ScoreCard
-        holes={selectedRound}
-        players={players}
-        onBack={handleBackToPlayerSetup}
-      />
-    )
+    // Use MultiplayerCardView for multiplayer games (2+ players)
+    // Use ScoreCard for single player practice (1 player)
+    if (players.length === 1) {
+      return (
+        <ScoreCard
+          holes={selectedRound}
+          players={players}
+          onBack={handleBackToPlayerSetup}
+        />
+      )
+    } else {
+      return (
+        <MultiplayerCardView
+          holes={selectedRound}
+          players={players}
+          onBack={handleBackToPlayerSetup}
+        />
+      )
+    }
   }
 
   return <RoundSelection onRoundSelect={handleRoundSelect} />
