@@ -1,5 +1,6 @@
 'use client'
 
+import { Flag, Sun, Clock } from 'lucide-react'
 import { RoundType } from '@/types'
 
 interface RoundSelectionProps {
@@ -12,8 +13,9 @@ export default function RoundSelection({ onRoundSelect }: RoundSelectionProps) {
       <div className="w-full max-w-md text-center space-y-8">
         {/* Header */}
         <div className="space-y-4">
-          <h1 className="text-4xl font-bold text-white drop-shadow-lg">
-            ⛳ ShotMate
+          <h1 className="text-4xl font-bold text-white drop-shadow-lg flex items-center justify-center gap-3">
+            <Flag className="w-10 h-10" strokeWidth={2} />
+            ShotMate
           </h1>
           <p className="text-lg text-white/90 drop-shadow-md">
             Your perfect golf scoring companion
@@ -31,8 +33,10 @@ export default function RoundSelection({ onRoundSelect }: RoundSelectionProps) {
               onClick={() => onRoundSelect(9)}
               className="w-full py-6 px-8 bg-amber-50 hover:bg-amber-100 text-amber-900 text-xl font-semibold rounded-xl shadow-lg transform transition-all duration-200 hover:scale-105 active:scale-95 border-2 border-amber-200 hover:border-amber-300"
             >
-              <div className="space-y-2">
-                <div className="text-2xl">🌅</div>
+              <div className="space-y-3">
+                <div className="flex justify-center">
+                  <Sun className="w-8 h-8 text-amber-700" strokeWidth={2} />
+                </div>
                 <div>9 Holes</div>
                 <div className="text-sm opacity-90">Quick round</div>
               </div>
@@ -42,8 +46,10 @@ export default function RoundSelection({ onRoundSelect }: RoundSelectionProps) {
               onClick={() => onRoundSelect(18)}
               className="w-full py-6 px-8 bg-stone-50 hover:bg-stone-100 text-stone-900 text-xl font-semibold rounded-xl shadow-lg transform transition-all duration-200 hover:scale-105 active:scale-95 border-2 border-stone-200 hover:border-stone-300"
             >
-              <div className="space-y-2">
-                <div className="text-2xl">🌞</div>
+              <div className="space-y-3">
+                <div className="flex justify-center">
+                  <Clock className="w-8 h-8 text-stone-700" strokeWidth={2} />
+                </div>
                 <div>18 Holes</div>
                 <div className="text-sm opacity-90">Full round</div>
               </div>
