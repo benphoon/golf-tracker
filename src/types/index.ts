@@ -1,8 +1,14 @@
+export interface Player {
+  id: string;
+  name: string;
+  scores: (number | null)[];
+  totalScore: number;
+}
+
 export interface GameState {
   holes: number;
-  scores: number[];
+  players: Player[];
   currentHole: number;
-  totalScore: number;
 }
 
 export type RoundType = 9 | 18;

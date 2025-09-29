@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import ScoreCard from '../ScoreCard'
-import { RoundType } from '@/types'
+import { RoundType, Player } from '@/types'
 
 // Mock sessionStorage
 const mockSessionStorage = (() => {
@@ -29,6 +29,16 @@ global.alert = jest.fn()
 
 describe('ScoreCard Component', () => {
   const mockOnBack = jest.fn()
+
+  // Helper function to create test players
+  const createTestPlayers = (holes: RoundType, numPlayers = 2): Player[] => {
+    return Array.from({ length: numPlayers }, (_, i) => ({
+      id: `player-${i + 1}`,
+      name: `Player ${i + 1}`,
+      scores: Array(holes).fill(null),
+      totalScore: 0
+    }))
+  }
 
   beforeEach(() => {
     jest.clearAllMocks()

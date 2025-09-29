@@ -4,10 +4,24 @@ import Home from '../page'
 
 // Mock the ScoreCard component
 jest.mock('../../components/ScoreCard', () => {
-  return function MockScoreCard({ holes, onBack }: { holes: number; onBack: () => void }) {
+  return function MockScoreCard({ holes, players, onBack }: { holes: number; players: any[]; onBack: () => void }) {
     return (
       <div data-testid="scorecard">
         <div>ScoreCard for {holes} holes</div>
+        <div>Players: {players?.length || 0}</div>
+        <button onClick={onBack} data-testid="back-button">Back</button>
+      </div>
+    )
+  }
+})
+
+// Mock the MultiplayerCardView component
+jest.mock('../../components/MultiplayerCardView', () => {
+  return function MockMultiplayerCardView({ holes, players, onBack }: { holes: number; players: any[]; onBack: () => void }) {
+    return (
+      <div data-testid="multiplayer-card-view">
+        <div>MultiplayerCardView for {holes} holes</div>
+        <div>Players: {players?.length || 0}</div>
         <button onClick={onBack} data-testid="back-button">Back</button>
       </div>
     )
@@ -65,7 +79,7 @@ describe('Home Page', () => {
       expect(screen.getByText('Full round')).toBeInTheDocument()
     })
 
-    it('navigates to scorecard when 9-hole button is clicked', async () => {
+    it('navigates to player setup when 9-hole button is clicked', async () => {
       const user = userEvent.setup()
       render(<Home />)
 
@@ -78,12 +92,12 @@ describe('Home Page', () => {
       await user.click(nineHoleButton)
 
       await waitFor(() => {
-        expect(screen.getByTestId('scorecard')).toBeInTheDocument()
-        expect(screen.getByText('ScoreCard for 9 holes')).toBeInTheDocument()
+        expect(screen.getByText('Player Setup')).toBeInTheDocument()
+        expect(screen.getByText('9 Hole Round')).toBeInTheDocument()
       })
     })
 
-    it('navigates to scorecard when 18-hole button is clicked', async () => {
+    it('navigates to player setup when 18-hole button is clicked', async () => {
       const user = userEvent.setup()
       render(<Home />)
 
@@ -96,33 +110,85 @@ describe('Home Page', () => {
       await user.click(eighteenHoleButton)
 
       await waitFor(() => {
-        expect(screen.getByTestId('scorecard')).toBeInTheDocument()
-        expect(screen.getByText('ScoreCard for 18 holes')).toBeInTheDocument()
+        expect(screen.getByText('Player Setup')).toBeInTheDocument()
+        expect(screen.getByText('18 Hole Round')).toBeInTheDocument()
       })
     })
 
-    it('returns to round selection when back is clicked from scorecard', async () => {
+    it('navigates through full flow: round selection → player setup → scorecard', async () => {
       const user = userEvent.setup()
       render(<Home />)
 
-      // Navigate to scorecard
+      // Navigate to round selection
+      const startButton = screen.getByText('Start Tracking')
+      await user.click(startButton)
+
+      // Select 9 holes
+      const nineHoleButton = screen.getByRole('button', { name: /9 holes/i })
+      await user.click(nineHoleButton)
+
+      // Should now be on player setup
+      await waitFor(() => {
+        expect(screen.getByText('Player Setup')).toBeInTheDocument()
+        expect(screen.getByText('Continue to Scoring')).toBeInTheDocument()
+      })
+
+      // Continue to scorecard
+      const continueButton = screen.getByText('Continue to Scoring')
+      await user.click(continueButton)
+
+      await waitFor(() => {
+        expect(screen.getByTestId('scorecard')).toBeInTheDocument()
+        expect(screen.getByText('ScoreCard for 9 holes')).toBeInTheDocument()
+      })
+    })
+
+    it('routes single player to traditional scorecard', async () => {
+      const user = userEvent.setup()
+      render(<Home />)
+
+      // Navigate to round selection → player setup → scorecard
       const startButton = screen.getByText('Start Tracking')
       await user.click(startButton)
 
       const nineHoleButton = screen.getByRole('button', { name: /9 holes/i })
       await user.click(nineHoleButton)
 
+      // Player setup with 1 player (default)
+      const continueButton = screen.getByText('Continue to Scoring')
+      await user.click(continueButton)
+
       await waitFor(() => {
+        // Should use traditional ScoreCard for single player
         expect(screen.getByTestId('scorecard')).toBeInTheDocument()
+        expect(screen.getByText('ScoreCard for 9 holes')).toBeInTheDocument()
+        expect(screen.getByText('Players: 1')).toBeInTheDocument()
       })
+    })
 
-      // Click back button
-      const backButton = screen.getByTestId('back-button')
-      await user.click(backButton)
+    it('routes multiplayer to card-based view', async () => {
+      const user = userEvent.setup()
+      render(<Home />)
+
+      // Navigate to round selection → player setup → multiplayer card view
+      const startButton = screen.getByText('Start Tracking')
+      await user.click(startButton)
+
+      const nineHoleButton = screen.getByRole('button', { name: /9 holes/i })
+      await user.click(nineHoleButton)
+
+      // Add a second player
+      const addPlayerButton = screen.getByText(/Add Player/)
+      await user.click(addPlayerButton)
+
+      const continueButton = screen.getByText('Continue to Scoring')
+      await user.click(continueButton)
 
       await waitFor(() => {
-        expect(screen.queryByTestId('scorecard')).not.toBeInTheDocument()
-        expect(screen.getByText('Choose Your Round')).toBeInTheDocument()
+        // Should use MultiplayerCardView for 2+ players
+        expect(screen.getByTestId('multiplayer-card-view')).toBeInTheDocument()
+        expect(screen.getByText('MultiplayerCardView for 9 holes')).toBeInTheDocument()
+        expect(screen.getByText('Players: 2')).toBeInTheDocument()
       })
     })
   })
