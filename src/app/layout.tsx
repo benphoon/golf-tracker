@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import './globals.css'
-import { AuthProvider } from '@/contexts/AuthContext'
 
 export const metadata: Metadata = {
   title: 'ShotMate ⛳',
@@ -20,11 +19,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="min-h-screen">
-        <AuthProvider>
-          <div className="container mx-auto px-4 py-6 max-w-md">
-            {children}
-          </div>
-        </AuthProvider>
+        <div className="container mx-auto px-4 py-6 max-w-md">
+          {children}
+        </div>
       </body>
     </html>
   )

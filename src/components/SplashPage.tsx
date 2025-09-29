@@ -1,26 +1,13 @@
 'use client'
 
-import AuthButton from './AuthButton'
-import { useAuth } from '@/contexts/AuthContext'
-
 interface SplashPageProps {
   onStart: () => void
-  onViewHistory: () => void
 }
 
-export default function SplashPage({ onStart, onViewHistory }: SplashPageProps) {
-  const { user } = useAuth()
-
-
+export default function SplashPage({ onStart }: SplashPageProps) {
   return (
-    <div className="min-h-screen relative">
-      {/* Header with Auth Button */}
-      <div className="absolute top-4 right-4 z-10">
-        <AuthButton onViewHistory={onViewHistory} />
-      </div>
-
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <div className="w-full max-w-sm text-center space-y-8">
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="w-full max-w-sm text-center space-y-8">
 
         {/* Logo Placeholder */}
         <div className="mx-auto w-32 h-32 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center shadow-xl border-2 border-white/30">
@@ -52,18 +39,12 @@ export default function SplashPage({ onStart, onViewHistory }: SplashPageProps) 
             </div>
           </button>
 
-          {/* Round History Button for Authenticated Users */}
-          {user && (
-            <button
-              onClick={onViewHistory}
-              className="w-full py-3 px-6 bg-blue-600/20 text-white text-lg font-semibold rounded-xl shadow-lg transform transition-all duration-300 hover:scale-105 active:scale-95 hover:bg-blue-600/30 border border-blue-400/30"
-            >
-              <div className="flex items-center justify-center space-x-2">
-                <span>📈</span>
-                <span>View Round History</span>
-              </div>
-            </button>
-          )}
+          {/* Future login button placeholder */}
+          <div className="text-center">
+            <p className="text-white/60 text-sm">
+              Coming soon: Sign in to save your rounds
+            </p>
+          </div>
         </div>
 
         {/* Feature Highlights */}
@@ -91,7 +72,6 @@ export default function SplashPage({ onStart, onViewHistory }: SplashPageProps) 
           <p className="text-white/50 text-xs">
             Optimized for golfers, by golfers
           </p>
-        </div>
         </div>
       </div>
     </div>
