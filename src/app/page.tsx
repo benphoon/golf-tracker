@@ -6,9 +6,11 @@ import MultiplayerCardView from '@/components/MultiplayerCardView'
 import SplashPage from '@/components/SplashPage'
 import RoundSelection from '@/components/RoundSelection'
 import PlayerSetup from '@/components/PlayerSetup'
+import RoundHistory from '@/components/RoundHistory'
+import AuthButton from '@/components/AuthButton'
 import { RoundType, Player } from '@/types'
 
-type AppState = 'splash' | 'roundSelection' | 'playerSetup' | 'scorecard'
+type AppState = 'splash' | 'roundSelection' | 'playerSetup' | 'scorecard' | 'roundHistory'
 
 export default function Home() {
   const [appState, setAppState] = useState<AppState>('splash')
@@ -39,8 +41,22 @@ export default function Home() {
     setAppState('playerSetup')
   }
 
+  const handleViewRoundHistory = () => {
+    setAppState('roundHistory')
+  }
+
+  const handleBackToSplash = () => {
+    setAppState('splash')
+    setSelectedRound(null)
+    setPlayers([])
+  }
+
   if (appState === 'splash') {
-    return <SplashPage onStart={handleStart} />
+    return <SplashPage onStart={handleStart} onViewHistory={handleViewRoundHistory} />
+  }
+
+  if (appState === 'roundHistory') {
+    return <RoundHistory onBack={handleBackToSplash} />
   }
 
   if (appState === 'playerSetup' && selectedRound) {
