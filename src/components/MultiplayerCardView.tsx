@@ -2,9 +2,6 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { RoundType, Player } from '@/types'
-import { useAuth } from '@/contexts/AuthContext'
-import { saveRound } from '@/lib/rounds'
-import AuthModal from './AuthModal'
 import {
   calculatePar,
   formatRelativeToPar,
@@ -22,11 +19,6 @@ export default function MultiplayerCardView({ holes, players: initialPlayers, on
   const [players, setPlayers] = useState<Player[]>(initialPlayers)
   const [currentHole, setCurrentHole] = useState(1)
   const [touchStartX, setTouchStartX] = useState<number | null>(null)
-  const [showAuthModal, setShowAuthModal] = useState(false)
-  const [saveMessage, setSaveMessage] = useState('')
-  const [isSaving, setIsSaving] = useState(false)
-
-  const { user } = useAuth()
 
   // Session storage key for multiplayer card view
   const storageKey = `golf-multiplayer-card-${holes}`
@@ -126,45 +118,6 @@ export default function MultiplayerCardView({ holes, players: initialPlayers, on
         }
       })
     )
-  }
-
-  const handleFinishRound = async () => {
-    if (!user) {
-      // Show auth modal for guests
-      setShowAuthModal(true)
-      return
-    }
-
-    // Save round for authenticated users
-    await handleSaveRound()
-  }
-
-  const handleSaveRound = async () => {
-    if (!user) return
-
-    setIsSaving(true)
-    setSaveMessage('')
-
-    try {
-      const result = await saveRound({
-        title: `${holes} Hole Round`,
-        holes,
-        players,
-        playedAt: new Date()
-      })
-
-      if (result.error) {
-        setSaveMessage(`Error: ${result.error}`)
-      } else {
-        setSaveMessage('Round saved successfully! 🎉')
-        // Clear session storage since round is now saved
-        sessionStorage.removeItem(storageKey)
-      }
-    } catch (error) {
-      setSaveMessage('Failed to save round. Please try again.')
-    } finally {
-      setIsSaving(false)
-    }
   }
 
   const allPlayersCompletedHole = players.every(player => player.scores[currentHole - 1] !== null)
@@ -359,11 +312,14 @@ export default function MultiplayerCardView({ holes, players: initialPlayers, on
 
                   {allPlayersFinished && (
                     <button
-                      onClick={handleFinishRound}
-                      disabled={isSaving}
-                      className="flex-1 py-3 bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white font-semibold rounded-xl transition-all"
+                      onClick={() => {
+                        const winner = sortedPlayers[0]
+                        const message = `🏆 ${winner.name} wins with ${winner.totalScore}! (${formatRelativeToPar(winner.totalScore, par)})`
+                        alert(message)
+                      }}
+                      className="flex-1 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl transition-all"
                     >
-                      {isSaving ? 'Saving...' : user ? '💾 Save Round' : '🏆 Finish Round'}
+                      🏆 Finish
                     </button>
                   )}
                 </div>
@@ -401,25 +357,8 @@ export default function MultiplayerCardView({ holes, players: initialPlayers, on
           <div className="mt-4 text-center text-sm text-blue-600">
             💡 Swipe left/right to navigate holes • Touch target to enter score
           </div>
-
-          {/* Save Message */}
-          {saveMessage && (
-            <div className={`mt-4 p-3 rounded-xl text-center text-sm font-medium ${
-              saveMessage.includes('Error') ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'
-            }`}>
-              {saveMessage}
-            </div>
-          )}
         </div>
       </div>
-
-      {/* Auth Modal for Guest Users */}
-      <AuthModal
-        isOpen={showAuthModal}
-        onClose={() => setShowAuthModal(false)}
-        title="Save this round?"
-        subtitle="Create an account to save your rounds and track progress over time"
-      />
     </div>
   )
 }

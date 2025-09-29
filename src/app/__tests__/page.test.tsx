@@ -1,19 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import Home from '../page'
-import { AuthProvider } from '@/contexts/AuthContext'
-
-// Mock the auth context to avoid Supabase requirements
-jest.mock('../../contexts/AuthContext', () => ({
-  AuthProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  useAuth: () => ({
-    user: null,
-    loading: false,
-    signUp: jest.fn(),
-    signIn: jest.fn(),
-    signOut: jest.fn()
-  })
-}))
 
 // Mock the ScoreCard component
 jest.mock('../../components/ScoreCard', () => {
