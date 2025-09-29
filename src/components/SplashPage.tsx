@@ -1,5 +1,7 @@
 'use client'
 
+import { Flag, Play, BarChart3, Smartphone, Zap, Target } from 'lucide-react'
+
 interface SplashPageProps {
   onStart: () => void
 }
@@ -11,7 +13,7 @@ export default function SplashPage({ onStart }: SplashPageProps) {
 
         {/* Logo Placeholder */}
         <div className="mx-auto w-32 h-32 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center shadow-xl border-2 border-white/30">
-          <div className="text-6xl">⛳</div>
+          <Flag className="w-16 h-16 text-white" strokeWidth={2} />
         </div>
 
         {/* Main Branding */}
@@ -33,9 +35,9 @@ export default function SplashPage({ onStart }: SplashPageProps) {
             onClick={onStart}
             className="w-full py-4 px-8 bg-white text-green-800 text-xl font-bold rounded-2xl shadow-xl transform transition-all duration-300 hover:scale-105 active:scale-95 hover:shadow-2xl border-2 border-white/20"
           >
-            <div className="flex items-center justify-center space-x-2">
+            <div className="flex items-center justify-center space-x-3">
+              <Play className="w-6 h-6 fill-current" strokeWidth={0} />
               <span>Start Tracking</span>
-              <span className="text-2xl">🏌️‍♂️</span>
             </div>
           </button>
 
@@ -50,19 +52,27 @@ export default function SplashPage({ onStart }: SplashPageProps) {
         {/* Feature Highlights */}
         <div className="grid grid-cols-2 gap-4 pt-6">
           <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-            <div className="text-3xl mb-2">📊</div>
+            <div className="flex justify-center mb-3">
+              <BarChart3 className="w-8 h-8 text-white" strokeWidth={2} />
+            </div>
             <div className="text-white text-sm font-medium">Score Tracking</div>
           </div>
           <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-            <div className="text-3xl mb-2">📱</div>
+            <div className="flex justify-center mb-3">
+              <Smartphone className="w-8 h-8 text-white" strokeWidth={2} />
+            </div>
             <div className="text-white text-sm font-medium">Mobile Ready</div>
           </div>
           <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-            <div className="text-3xl mb-2">⚡</div>
+            <div className="flex justify-center mb-3">
+              <Zap className="w-8 h-8 text-white" strokeWidth={2} />
+            </div>
             <div className="text-white text-sm font-medium">Quick Entry</div>
           </div>
           <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-            <div className="text-3xl mb-2">🎯</div>
+            <div className="flex justify-center mb-3">
+              <Target className="w-8 h-8 text-white" strokeWidth={2} />
+            </div>
             <div className="text-white text-sm font-medium">Track Progress</div>
           </div>
         </div>

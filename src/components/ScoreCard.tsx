@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { ChevronLeft, Trophy, Medal, Award, User } from 'lucide-react'
 import { RoundType, Player } from '@/types'
 import {
   calculatePar,
@@ -96,12 +97,14 @@ export default function ScoreCard({ holes, players: initialPlayers, onBack }: Sc
   )
 
   const getPlayerRankIcon = (playerIndex: number) => {
-    if (sortedPlayers[playerIndex].totalScore === 0) return '👤'
+    if (sortedPlayers[playerIndex].totalScore === 0) {
+      return <User className="w-5 h-5 text-gray-500" strokeWidth={2} />
+    }
     switch (playerIndex) {
-      case 0: return '🥇'
-      case 1: return '🥈'
-      case 2: return '🥉'
-      default: return '👤'
+      case 0: return <Trophy className="w-5 h-5 text-yellow-500" strokeWidth={2} />
+      case 1: return <Medal className="w-5 h-5 text-gray-400" strokeWidth={2} />
+      case 2: return <Award className="w-5 h-5 text-amber-600" strokeWidth={2} />
+      default: return <User className="w-5 h-5 text-gray-500" strokeWidth={2} />
     }
   }
 
@@ -114,7 +117,10 @@ export default function ScoreCard({ holes, players: initialPlayers, onBack }: Sc
             onClick={onBack}
             className="text-white hover:text-white/80 font-medium drop-shadow-md"
           >
-            ← Back
+            <div className="flex items-center gap-2">
+              <ChevronLeft className="w-5 h-5" strokeWidth={2} />
+              Back
+            </div>
           </button>
           <h1 className="text-2xl font-bold text-white drop-shadow-lg">
             {holes} Hole Round
@@ -250,7 +256,10 @@ export default function ScoreCard({ holes, players: initialPlayers, onBack }: Sc
               }}
               className="flex-1 py-3 px-6 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-colors duration-200"
             >
-              🏆 Finish Round
+              <div className="flex items-center gap-2">
+                <Trophy className="w-5 h-5" strokeWidth={2} />
+                Finish Round
+              </div>
             </button>
           )}
         </div>

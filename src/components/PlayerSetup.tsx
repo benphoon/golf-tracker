@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { ChevronLeft, UserPlus, X, Play, Lightbulb, Target } from 'lucide-react'
 import { RoundType, Player } from '@/types'
 
 interface PlayerSetupProps {
@@ -48,9 +49,10 @@ export default function PlayerSetup({ holes, onContinue, onBack }: PlayerSetupPr
         <div className="flex items-center justify-between">
           <button
             onClick={onBack}
-            className="text-white hover:text-white/80 font-medium drop-shadow-md"
+            className="text-white hover:text-white/80 font-medium drop-shadow-md flex items-center gap-2"
           >
-            ← Back
+            <ChevronLeft className="w-5 h-5" strokeWidth={2} />
+            Back
           </button>
           <h1 className="text-2xl font-bold text-white drop-shadow-lg">
             Player Setup
@@ -85,9 +87,9 @@ export default function PlayerSetup({ holes, onContinue, onBack }: PlayerSetupPr
               {playerNames.length > 1 && (
                 <button
                   onClick={() => removePlayer(index)}
-                  className="w-12 h-12 bg-red-500 hover:bg-red-600 text-white rounded-xl shadow-md transform transition-all duration-200 hover:scale-105 active:scale-95 flex items-center justify-center text-lg font-bold"
+                  className="w-12 h-12 bg-red-500 hover:bg-red-600 text-white rounded-xl shadow-md transform transition-all duration-200 hover:scale-105 active:scale-95 flex items-center justify-center"
                 >
-                  ×
+                  <X className="w-5 h-5" strokeWidth={2} />
                 </button>
               )}
             </div>
@@ -97,9 +99,10 @@ export default function PlayerSetup({ holes, onContinue, onBack }: PlayerSetupPr
           {playerNames.length < 4 && (
             <button
               onClick={addPlayer}
-              className="w-full py-4 px-6 bg-amber-100 hover:bg-amber-200 text-amber-900 font-semibold rounded-xl shadow-md transform transition-all duration-200 hover:scale-105 active:scale-95 border-2 border-amber-300 hover:border-amber-400"
+              className="w-full py-4 px-6 bg-amber-100 hover:bg-amber-200 text-amber-900 font-semibold rounded-xl shadow-md transform transition-all duration-200 hover:scale-105 active:scale-95 border-2 border-amber-300 hover:border-amber-400 flex items-center justify-center gap-2"
             >
-              + Add Player ({playerNames.length}/4)
+              <UserPlus className="w-5 h-5" strokeWidth={2} />
+              Add Player ({playerNames.length}/4)
             </button>
           )}
         </div>
@@ -107,8 +110,9 @@ export default function PlayerSetup({ holes, onContinue, onBack }: PlayerSetupPr
         {/* Continue Button */}
         <button
           onClick={handleContinue}
-          className="w-full py-6 px-8 bg-green-600 hover:bg-green-700 text-white text-xl font-semibold rounded-xl shadow-lg transform transition-all duration-200 hover:scale-105 active:scale-95"
+          className="w-full py-6 px-8 bg-green-600 hover:bg-green-700 text-white text-xl font-semibold rounded-xl shadow-lg transform transition-all duration-200 hover:scale-105 active:scale-95 flex items-center justify-center gap-3"
         >
+          <Play className="w-6 h-6 fill-current" strokeWidth={0} />
           Continue to Scoring
         </button>
 
@@ -116,9 +120,15 @@ export default function PlayerSetup({ holes, onContinue, onBack }: PlayerSetupPr
         <div className="pt-4 text-sm text-white/80 text-center">
           <p>You can edit player names during the round</p>
           {playerNames.length === 1 ? (
-            <p className="mt-2">💡 Single player mode uses a detailed scorecard</p>
+            <p className="mt-2 flex items-center justify-center gap-2">
+              <Lightbulb className="w-4 h-4" strokeWidth={2} />
+              Single player mode uses a detailed scorecard
+            </p>
           ) : (
-            <p className="mt-2">🎯 Multiplayer mode uses a card-based interface</p>
+            <p className="mt-2 flex items-center justify-center gap-2">
+              <Target className="w-4 h-4" strokeWidth={2} />
+              Multiplayer mode uses a card-based interface
+            </p>
           )}
         </div>
       </div>
